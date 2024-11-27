@@ -1,6 +1,11 @@
 Util = Util or {}
 Util.Util = {}
 
+function Util.Util:callWithArrayArguments(func, args)
+    return func(unpack(args))
+end
+
+
 function Util.Util:CombinedFingerprint(input)
     local hash = 0
     local prime = 37
@@ -50,6 +55,7 @@ function Util.Util:InitializeNestedTable(tbl, defaultValue, ...)
     for i, key in ipairs(keys) do
         if i == #keys then
             current[key] = current[key] or defaultValue
+
         else
             current[key] = current[key] or {}
             current = current[key]
@@ -70,11 +76,11 @@ function Util.Util:TimeOfDay()
     end
 end
 
-function Util.Util.PrintG(string)
+function Util.Util:PrintG(string)
     print("|cff00ff00" .. string .. "|r")
 end
 
-function Util.Util.SumElements(tbl,key)
+function Util.Util:SumElements(tbl,key)
     local sum = 0
     for _, element in ipairs(tbl) do
         sum = sum + element[key]
@@ -91,14 +97,14 @@ function Util.Util:SumFingerPrints(tbl)
 end
 
 function Util.Util:GetNextFreeIndex(tbl)
-    local index = 1
-    while tbl[index] do
-        index = index + 1
+    for index = 1, #tbl + 1 do
+        if not tbl[index] then
+            return index
+        end
     end
-    return index
 end
 
-function Util.Util.validate(param, expectedType, paramName, allowNil)
+function Util.Util:Validate(param, expectedType, paramName, allowNil)
     if allowNil and param == nil then
         return true
     end
@@ -110,18 +116,33 @@ function Util.Util.validate(param, expectedType, paramName, allowNil)
 end
 
 
-function Util.Util.validateNonEmptyString(param, paramName)
-    Util.Util.validate(param, "string", paramName)
+function Util.Util:ValidateNonEmptyString(param, paramName)
+    Util.Util:validate(param, "string", paramName)
     if param == "" then
         error(string.format("Parameter '%s' darf nicht leer sein.", paramName))
     end
 end
 
-function Util.Util.validateNumberInRange(param, min, max, paramName)
-    Util.Util.validate(param, "number", paramName)
+function Util.Util:ValidateNumberInRange(param, min, max, paramName)
+    Util.Util:validate(param, "number", paramName)
     if param < min or param > max then
         error(string.format("Parameter '%s' muss zwischen %d und %d liegen. Erhalten: %d",
             paramName, min, max, param))
     end
 end
 
+
+function Util.Util:InitializeNestedTable(tbl, defaultValue, ...)
+    local keys = {...}
+    local current = tbl
+    for i, key in ipairs(keys) do
+        if i == #keys then
+            current[key] = current[key] or defaultValue
+        else
+            current[key] = current[key] or {}
+            current = current[key]
+        end
+        print(current)
+    end
+    return tbl
+end
