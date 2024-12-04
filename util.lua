@@ -49,21 +49,6 @@ function Util.Util:CompareLists(listA, listB)
     return uniqueElementsA, uniqueElementsB, commonElements
 end
 
-function Util.Util:InitializeNestedTable(tbl, defaultValue, ...)
-    local keys = {...}
-    local current = tbl
-    for i, key in ipairs(keys) do
-        if i == #keys then
-            current[key] = current[key] or defaultValue
-
-        else
-            current[key] = current[key] or {}
-            current = current[key]
-        end
-    end
-    return tbl
-end
-
 function Util.Util:TimeOfDay()
     Util.Util:ChronoSet()
     local hour = tonumber(Util.Hour)
@@ -145,4 +130,37 @@ function Util.Util:InitializeNestedTable(tbl, defaultValue, ...)
         print(current)
     end
     return tbl
+end
+
+function TableMerge(t1, t2)
+    for k,v in pairs(t2) do
+        if type(v) == "table" then
+            if type(t1[k]) ~= "table" then
+                t1[k] = {}
+            end
+            tableMerge(t1[k], t2[k])
+        else
+            t1[k] = v
+        end
+    end
+    return t1
+end
+
+function StringConcat(...)
+    local result = ""
+    for i = 1, select("#", ...) do
+        result = result .. select(i, ...)
+    end
+    return result
+end
+
+function StringSplit(str, sep)
+    local result = {}
+    local pattern = string.format("([^%s]+)", sep)
+    str:gsub(pattern, function(c) table.insert(result, c) end)
+    return result
+end
+
+function StringTrim(str)
+    return str:match("^%s*(.-)%s*$")
 end
