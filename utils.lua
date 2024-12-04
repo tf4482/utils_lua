@@ -164,3 +164,23 @@ end
 function StringTrim(str)
     return str:match("^%s*(.-)%s*$")
 end
+
+function Txt(text, color)
+
+    local colorList = {
+        ["green"] = "00FF00",
+        ["red"] = "FF0000",
+        ["blue"] = "0000FF",
+        ["yellow"] = "FFFF00",
+        ["white"] = "FFFFFF",
+    }
+    if color == nil or not colorList[color] then
+        return text
+    end
+    local txt = {"|CFF"}
+    txt[#txt+1] = colorList[color]
+    txt[#txt+1] = text
+    txt[#txt+1] = "|r"
+
+    return table.concat(txt)
+end
